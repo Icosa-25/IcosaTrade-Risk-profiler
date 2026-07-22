@@ -878,7 +878,7 @@ elif st.session_state.page == 'result':
     st.markdown("<br><br>", unsafe_allow_html=True)
     _,rc,_ = st.columns([1,2,1])
     with rc:
-        if st.button("🔄  Dobara Test Karo", use_container_width=True):
+        if st.button("🔄 Re-Test", use_container_width=True):
             st.session_state.page = 'home'
             st.session_state.current_q = 0
             st.session_state.answers = {}
