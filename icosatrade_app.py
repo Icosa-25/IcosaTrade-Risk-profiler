@@ -337,7 +337,7 @@ def train_model():
 
 model, scaler, le, feature_cols = train_model()
 
- ── Quiz Questions ────────────────────────────────────────────
+── Quiz Questions ────────────────────────────────────────────
 QUESTIONS = [
 #     {
 #         "id": "q1", "num": "01",
