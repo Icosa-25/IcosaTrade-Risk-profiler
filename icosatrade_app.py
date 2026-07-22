@@ -337,83 +337,163 @@ def train_model():
 
 model, scaler, le, feature_cols = train_model()
 
-# ── Quiz Questions ────────────────────────────────────────────
+ ── Quiz Questions ────────────────────────────────────────────
+# QUESTIONS = [
+#     {
+#         "id": "q1", "num": "01",
+#         "text": "Kal tumhara ₹10,000 ka trade ₹3,000 ke loss mein close hua.",
+#         "sub": "Aaj subah market khulne pe tumhara pehla reaction kya hoga?",
+#         "options": [
+#             ("A", "Aaj trading nahi — thanda dimaag zaroori hai", {"position_size_after_loss_ratio": 0.5, "loss_recovery_trade_size_ratio": 0.8}),
+#             ("B", "Same size mein ek carefully planned trade", {"position_size_after_loss_ratio": 0.9, "loss_recovery_trade_size_ratio": 1.0}),
+#             ("C", "Thoda bada trade — loss partial recover karna hai", {"position_size_after_loss_ratio": 1.4, "loss_recovery_trade_size_ratio": 1.4}),
+#             ("D", "Double size mein trade — aaj recover karna hi hai", {"position_size_after_loss_ratio": 2.5, "loss_recovery_trade_size_ratio": 2.2}),
+#         ]
+#     },
+#     {
+#         "id": "q2", "num": "02",
+#         "text": "Ek stock tumhari watchlist mein 3 hafte se pada hai.",
+#         "sub": "Aaj ek positive news aayi us stock pe — tum kya karte ho?",
+#         "options": [
+#             ("A", "Abhi nahi — aur research karta/karti hun", {"watchlist_to_buy_conversion_time": 35, "buy_decision_after_news_delay": 7}),
+#             ("B", "2-3 din mein decide karunga/karungi", {"watchlist_to_buy_conversion_time": 12, "buy_decision_after_news_delay": 3}),
+#             ("C", "Aaj shaam tak entry le leta/leti hun", {"watchlist_to_buy_conversion_time": 3, "buy_decision_after_news_delay": 0.5}),
+#             ("D", "News dekhte hi buy — opportunity miss nahi karni", {"watchlist_to_buy_conversion_time": 0.2, "buy_decision_after_news_delay": 0.1}),
+#         ]
+#     },
+#     {
+#         "id": "q3", "num": "03",
+#         "text": "Ek stock jo tumne pichle mahine miss kiya — 40% upar ja chuka hai.",
+#         "sub": "Dost bol raha hai 'abhi bhi late nahi' — tum kya sochte ho?",
+#         "options": [
+#             ("A", "Miss hua toh miss hua — next opportunity dhundhunga/dhundhungi", {"missed_rally_chasing_ratio": 0.05, "portfolio_overlap_with_hot_stocks": 0.08}),
+#             ("B", "Thoda research karunga — agar fundamentals strong hain toh entry", {"missed_rally_chasing_ratio": 0.25, "portfolio_overlap_with_hot_stocks": 0.3}),
+#             ("C", "Abhi bhi 10-15% upside hai — entry le sakta/sakti hun", {"missed_rally_chasing_ratio": 0.55, "portfolio_overlap_with_hot_stocks": 0.55}),
+#             ("D", "Turant buy — yeh aur upar jaayega", {"missed_rally_chasing_ratio": 0.88, "portfolio_overlap_with_hot_stocks": 0.88}),
+#         ]
+#     },
+#     {
+#         "id": "q4", "num": "04",
+#         "text": "Tumhare 5 trades profitable rahe — streak chal rahi hai.",
+#         "sub": "6th trade mein tumhara position size kya hoga compared to normal?",
+#         "options": [
+#             ("A", "Same size — luck aur skill alag hoti hai", {"consecutive_profit_aggressiveness": 1.05, "position_size_after_gain_ratio": 0.9}),
+#             ("B", "10-20% bada — thoda confident hun", {"consecutive_profit_aggressiveness": 1.3, "position_size_after_gain_ratio": 1.2}),
+#             ("C", "50% bada — mera analysis kaam kar raha hai", {"consecutive_profit_aggressiveness": 1.7, "position_size_after_gain_ratio": 1.6}),
+#             ("D", "Double ya zyada — streak ko maximize karo", {"consecutive_profit_aggressiveness": 3.0, "position_size_after_gain_ratio": 3.0}),
+#         ]
+#     },
+#     {
+#         "id": "q5", "num": "05",
+#         "text": "Stop loss ke baare mein tumhari soch kya hai?",
+#         "sub": "10 trades mein se kitne mein tum entry se pehle stop loss set karte ho?",
+#         "options": [
+#             ("A", "9-10 trades mein — discipline non-negotiable hai", {"stop_loss_usage_consistency": 0.92, "consecutive_loss_tolerance": 2}),
+#             ("B", "6-7 trades mein — mostly set karta/karti hun", {"stop_loss_usage_consistency": 0.65, "consecutive_loss_tolerance": 5}),
+#             ("C", "3-4 trades mein — sometimes forget ho jaata", {"stop_loss_usage_consistency": 0.35, "consecutive_loss_tolerance": 9}),
+#             ("D", "Rarely — stop loss trigger hone se pehle manually manage karta/karti hun", {"stop_loss_usage_consistency": 0.05, "consecutive_loss_tolerance": 16}),
+#         ]
+#     },
+#     {
+#         "id": "q6", "num": "06",
+#         "text": "Ek stock 20% neeche aa gaya jab se tumne buy kiya.",
+#         "sub": "Tumhara next action kya hoga?",
+#         "options": [
+#             ("A", "Stop loss hit — exit. Thesis galat tha", {"average_down_frequency": 0.07, "loss_holding_period_vs_gain": 32, "profit_locking_consistency": 0.88}),
+#             ("B", "Thoda aur hold — fundamentals still strong hain", {"average_down_frequency": 0.2, "loss_holding_period_vs_gain": 55, "profit_locking_consistency": 0.65}),
+#             ("C", "Average down — sasta mil raha hai toh aur buy karo", {"average_down_frequency": 0.42, "loss_holding_period_vs_gain": 72, "profit_locking_consistency": 0.38}),
+#             ("D", "Aggressively average down — yeh toh opportunity hai", {"average_down_frequency": 0.72, "loss_holding_period_vs_gain": 90, "profit_locking_consistency": 0.12}),
+#         ]
+#     },
+#     {
+#         "id": "q7", "num": "07",
+#         "text": "Trading decisions ke liye news/information kahan se lete ho?",
+#         "sub": "Apna primary approach choose karo.",
+#         "options": [
+#             ("A", "Multiple sources + khud ki analysis — 2-3 din research", {"single_source_news_dependency": 0.12, "recent_performance_weight": 1, "trade_frequency_after_market_volatility": 1}),
+#             ("B", "2-3 trusted sources — balance maintain karta/karti hun", {"single_source_news_dependency": 0.32, "recent_performance_weight": 3, "trade_frequency_after_market_volatility": 3}),
+#             ("C", "Mainly ek source + tips from dost/group", {"single_source_news_dependency": 0.58, "recent_performance_weight": 6, "trade_frequency_after_market_volatility": 6}),
+#             ("D", "WhatsApp/Telegram tips + social media — jo viral ho woh buy", {"single_source_news_dependency": 0.82, "recent_performance_weight": 9, "trade_frequency_after_market_volatility": 9}),
+#         ]
+#     },
+# ]
+
 QUESTIONS = [
     {
         "id": "q1", "num": "01",
-        "text": "Kal tumhara ₹10,000 ka trade ₹3,000 ke loss mein close hua.",
-        "sub": "Aaj subah market khulne pe tumhara pehla reaction kya hoga?",
+        "text": "Yesterday your ₹10,000 trade closed at a ₹3,000 loss.",
+        "sub": "What is your first move when the market opens today?",
         "options": [
-            ("A", "Aaj trading nahi — thanda dimaag zaroori hai", {"position_size_after_loss_ratio": 0.5, "loss_recovery_trade_size_ratio": 0.8}),
-            ("B", "Same size mein ek carefully planned trade", {"position_size_after_loss_ratio": 0.9, "loss_recovery_trade_size_ratio": 1.0}),
-            ("C", "Thoda bada trade — loss partial recover karna hai", {"position_size_after_loss_ratio": 1.4, "loss_recovery_trade_size_ratio": 1.4}),
-            ("D", "Double size mein trade — aaj recover karna hi hai", {"position_size_after_loss_ratio": 2.5, "loss_recovery_trade_size_ratio": 2.2}),
+            ("A", "Take a break — clear head first", {"position_size_after_loss_ratio": 0.5, "loss_recovery_trade_size_ratio": 0.8}),
+            ("B", "One planned trade, same size as before", {"position_size_after_loss_ratio": 0.9, "loss_recovery_trade_size_ratio": 1.0}),
+            ("C", "Slightly bigger trade to recover some loss", {"position_size_after_loss_ratio": 1.4, "loss_recovery_trade_size_ratio": 1.4}),
+            ("D", "Double down — must recover today", {"position_size_after_loss_ratio": 2.5, "loss_recovery_trade_size_ratio": 2.2}),
         ]
     },
     {
         "id": "q2", "num": "02",
-        "text": "Ek stock tumhari watchlist mein 3 hafte se pada hai.",
-        "sub": "Aaj ek positive news aayi us stock pe — tum kya karte ho?",
+        "text": "A stock on your watchlist just got positive news.",
+        "sub": "It has been sitting there for 3 weeks. What do you do?",
         "options": [
-            ("A", "Abhi nahi — aur research karta/karti hun", {"watchlist_to_buy_conversion_time": 35, "buy_decision_after_news_delay": 7}),
-            ("B", "2-3 din mein decide karunga/karungi", {"watchlist_to_buy_conversion_time": 12, "buy_decision_after_news_delay": 3}),
-            ("C", "Aaj shaam tak entry le leta/leti hun", {"watchlist_to_buy_conversion_time": 3, "buy_decision_after_news_delay": 0.5}),
-            ("D", "News dekhte hi buy — opportunity miss nahi karni", {"watchlist_to_buy_conversion_time": 0.2, "buy_decision_after_news_delay": 0.1}),
+            ("A", "Still not ready — need more research", {"watchlist_to_buy_conversion_time": 35, "buy_decision_after_news_delay": 7}),
+            ("B", "Will decide in 2-3 days after reviewing", {"watchlist_to_buy_conversion_time": 12, "buy_decision_after_news_delay": 3}),
+            ("C", "Will enter by end of day", {"watchlist_to_buy_conversion_time": 3, "buy_decision_after_news_delay": 0.5}),
+            ("D", "Buy now — can't miss this", {"watchlist_to_buy_conversion_time": 0.2, "buy_decision_after_news_delay": 0.1}),
         ]
     },
     {
         "id": "q3", "num": "03",
-        "text": "Ek stock jo tumne pichle mahine miss kiya — 40% upar ja chuka hai.",
-        "sub": "Dost bol raha hai 'abhi bhi late nahi' — tum kya sochte ho?",
+        "text": "A stock you missed last month is now up 40%.",
+        "sub": "A friend says it still has room to grow. Your call?",
         "options": [
-            ("A", "Miss hua toh miss hua — next opportunity dhundhunga/dhundhungi", {"missed_rally_chasing_ratio": 0.05, "portfolio_overlap_with_hot_stocks": 0.08}),
-            ("B", "Thoda research karunga — agar fundamentals strong hain toh entry", {"missed_rally_chasing_ratio": 0.25, "portfolio_overlap_with_hot_stocks": 0.3}),
-            ("C", "Abhi bhi 10-15% upside hai — entry le sakta/sakti hun", {"missed_rally_chasing_ratio": 0.55, "portfolio_overlap_with_hot_stocks": 0.55}),
-            ("D", "Turant buy — yeh aur upar jaayega", {"missed_rally_chasing_ratio": 0.88, "portfolio_overlap_with_hot_stocks": 0.88}),
+            ("A", "Missed it — moving on to the next one", {"missed_rally_chasing_ratio": 0.05, "portfolio_overlap_with_hot_stocks": 0.08}),
+            ("B", "Will check fundamentals before deciding", {"missed_rally_chasing_ratio": 0.25, "portfolio_overlap_with_hot_stocks": 0.3}),
+            ("C", "Still some upside left — will enter carefully", {"missed_rally_chasing_ratio": 0.55, "portfolio_overlap_with_hot_stocks": 0.55}),
+            ("D", "Buy now — it will go even higher", {"missed_rally_chasing_ratio": 0.88, "portfolio_overlap_with_hot_stocks": 0.88}),
         ]
     },
     {
         "id": "q4", "num": "04",
-        "text": "Tumhare 5 trades profitable rahe — streak chal rahi hai.",
-        "sub": "6th trade mein tumhara position size kya hoga compared to normal?",
+        "text": "You are on a 5-trade winning streak.",
+        "sub": "How do you size your next trade compared to usual?",
         "options": [
-            ("A", "Same size — luck aur skill alag hoti hai", {"consecutive_profit_aggressiveness": 1.05, "position_size_after_gain_ratio": 0.9}),
-            ("B", "10-20% bada — thoda confident hun", {"consecutive_profit_aggressiveness": 1.3, "position_size_after_gain_ratio": 1.2}),
-            ("C", "50% bada — mera analysis kaam kar raha hai", {"consecutive_profit_aggressiveness": 1.7, "position_size_after_gain_ratio": 1.6}),
-            ("D", "Double ya zyada — streak ko maximize karo", {"consecutive_profit_aggressiveness": 3.0, "position_size_after_gain_ratio": 3.0}),
+            ("A", "Same size — streaks don't change my plan", {"consecutive_profit_aggressiveness": 1.05, "position_size_after_gain_ratio": 0.9}),
+            ("B", "10-20% bigger — feeling a bit confident", {"consecutive_profit_aggressiveness": 1.3, "position_size_after_gain_ratio": 1.2}),
+            ("C", "50% bigger — my strategy is clearly working", {"consecutive_profit_aggressiveness": 1.7, "position_size_after_gain_ratio": 1.6}),
+            ("D", "Double or more — maximize the streak", {"consecutive_profit_aggressiveness": 3.0, "position_size_after_gain_ratio": 3.0}),
         ]
     },
     {
         "id": "q5", "num": "05",
-        "text": "Stop loss ke baare mein tumhari soch kya hai?",
-        "sub": "10 trades mein se kitne mein tum entry se pehle stop loss set karte ho?",
+        "text": "How do you use stop loss in your trades?",
+        "sub": "Out of every 10 trades, how many have a stop loss set before entry?",
         "options": [
-            ("A", "9-10 trades mein — discipline non-negotiable hai", {"stop_loss_usage_consistency": 0.92, "consecutive_loss_tolerance": 2}),
-            ("B", "6-7 trades mein — mostly set karta/karti hun", {"stop_loss_usage_consistency": 0.65, "consecutive_loss_tolerance": 5}),
-            ("C", "3-4 trades mein — sometimes forget ho jaata", {"stop_loss_usage_consistency": 0.35, "consecutive_loss_tolerance": 9}),
-            ("D", "Rarely — stop loss trigger hone se pehle manually manage karta/karti hun", {"stop_loss_usage_consistency": 0.05, "consecutive_loss_tolerance": 16}),
+            ("A", "9 out of 10 — it is non-negotiable for me", {"stop_loss_usage_consistency": 0.92, "consecutive_loss_tolerance": 2}),
+            ("B", "6 or 7 — I set it most of the time", {"stop_loss_usage_consistency": 0.65, "consecutive_loss_tolerance": 5}),
+            ("C", "3 or 4 — I sometimes forget", {"stop_loss_usage_consistency": 0.35, "consecutive_loss_tolerance": 9}),
+            ("D", "Rarely — I prefer to manage it manually", {"stop_loss_usage_consistency": 0.05, "consecutive_loss_tolerance": 16}),
         ]
     },
     {
         "id": "q6", "num": "06",
-        "text": "Ek stock 20% neeche aa gaya jab se tumne buy kiya.",
-        "sub": "Tumhara next action kya hoga?",
+        "text": "A stock you bought is now down 20%.",
+        "sub": "What do you do next?",
         "options": [
-            ("A", "Stop loss hit — exit. Thesis galat tha", {"average_down_frequency": 0.07, "loss_holding_period_vs_gain": 32, "profit_locking_consistency": 0.88}),
-            ("B", "Thoda aur hold — fundamentals still strong hain", {"average_down_frequency": 0.2, "loss_holding_period_vs_gain": 55, "profit_locking_consistency": 0.65}),
-            ("C", "Average down — sasta mil raha hai toh aur buy karo", {"average_down_frequency": 0.42, "loss_holding_period_vs_gain": 72, "profit_locking_consistency": 0.38}),
-            ("D", "Aggressively average down — yeh toh opportunity hai", {"average_down_frequency": 0.72, "loss_holding_period_vs_gain": 90, "profit_locking_consistency": 0.12}),
+            ("A", "Exit — the original thesis was wrong", {"average_down_frequency": 0.07, "loss_holding_period_vs_gain": 32, "profit_locking_consistency": 0.88}),
+            ("B", "Hold — fundamentals are still intact", {"average_down_frequency": 0.2, "loss_holding_period_vs_gain": 55, "profit_locking_consistency": 0.65}),
+            ("C", "Buy more — it is cheaper now", {"average_down_frequency": 0.42, "loss_holding_period_vs_gain": 72, "profit_locking_consistency": 0.38}),
+            ("D", "Aggressively buy more — this is a great opportunity", {"average_down_frequency": 0.72, "loss_holding_period_vs_gain": 90, "profit_locking_consistency": 0.12}),
         ]
     },
     {
         "id": "q7", "num": "07",
-        "text": "Trading decisions ke liye news/information kahan se lete ho?",
-        "sub": "Apna primary approach choose karo.",
+        "text": "Where do you get information before making a trade?",
+        "sub": "Pick the option that best describes you.",
         "options": [
-            ("A", "Multiple sources + khud ki analysis — 2-3 din research", {"single_source_news_dependency": 0.12, "recent_performance_weight": 1, "trade_frequency_after_market_volatility": 1}),
-            ("B", "2-3 trusted sources — balance maintain karta/karti hun", {"single_source_news_dependency": 0.32, "recent_performance_weight": 3, "trade_frequency_after_market_volatility": 3}),
-            ("C", "Mainly ek source + tips from dost/group", {"single_source_news_dependency": 0.58, "recent_performance_weight": 6, "trade_frequency_after_market_volatility": 6}),
-            ("D", "WhatsApp/Telegram tips + social media — jo viral ho woh buy", {"single_source_news_dependency": 0.82, "recent_performance_weight": 9, "trade_frequency_after_market_volatility": 9}),
+            ("A", "Multiple sources with 2-3 days of my own research", {"single_source_news_dependency": 0.12, "recent_performance_weight": 1, "trade_frequency_after_market_volatility": 1}),
+            ("B", "2-3 trusted sources — I stay balanced", {"single_source_news_dependency": 0.32, "recent_performance_weight": 3, "trade_frequency_after_market_volatility": 3}),
+            ("C", "Mainly one source plus tips from friends", {"single_source_news_dependency": 0.58, "recent_performance_weight": 6, "trade_frequency_after_market_volatility": 6}),
+            ("D", "Social media and group tips — buy what is trending", {"single_source_news_dependency": 0.82, "recent_performance_weight": 9, "trade_frequency_after_market_volatility": 9}),
         ]
     },
 ]
@@ -435,37 +515,72 @@ DEFAULTS = {
     'house_money_effect_score': 0.55,
 }
 
+# PROFILE_CONFIG = {
+#     'Conservative': {
+#         'color': '#38A169', 'bg': 'rgba(56,161,105,0.1)', 'border': 'rgba(56,161,105,0.3)',
+#         'emoji': '🛡️', 'label': 'Conservative Investor',
+#         'desc': 'Tum risk se bachte ho aur capital preservation ko priority dete ho. Systematic, patient, aur disciplined — yeh tumhari trading ki pehchaan hai.',
+#         'biases': [('Familiarity Bias','#276749'),('Status Quo Bias','#22543D'),('Loss Aversion','#1C4532')],
+#         'tip': '💡 SIP aur index funds tumhare liye best suited hain. Diversification pe focus karo.',
+#         'risk_level': 2,
+#     },
+#     'Moderate': {
+#         'color': '#4299E1', 'bg': 'rgba(66,153,225,0.1)', 'border': 'rgba(66,153,225,0.3)',
+#         'emoji': '⚖️', 'label': 'Moderate Investor',
+#         'desc': 'Tum balance maintain karte ho — na zyada conservative, na zyada aggressive. Research-backed decisions aur controlled risk tumhari strength hai.',
+#         'biases': [('Recency Bias','#2B6CB0'),('Mild Anchoring','#2C5282'),('Confirmation Bias','#1A365D')],
+#         'tip': '💡 Quarterly portfolio review karo. Ek hi sector mein zyada concentration avoid karo.',
+#         'risk_level': 4,
+#     },
+#     'Aggressive': {
+#         'color': '#ED8936', 'bg': 'rgba(237,137,54,0.1)', 'border': 'rgba(237,137,54,0.3)',
+#         'emoji': '🔥', 'label': 'Aggressive Trader',
+#         'desc': 'High risk tolerance hai tumhara. Tum opportunities dhundhte ho aur bold bets lagate ho. Skill hai — lekin discipline aur bhi important hai is stage pe.',
+#         'biases': [('Overconfidence','#7B341E'),('Hot Hand Fallacy','#652B19'),('Confirmation Bias','#4A1E0F')],
+#         'tip': '⚠️ Position sizing pe strict rules banao. Har trade mein max 2-3% capital risk rule follow karo.',
+#         'risk_level': 7,
+#     },
+#     'Impulsive': {
+#         'color': '#FC8181', 'bg': 'rgba(252,129,129,0.1)', 'border': 'rgba(252,129,129,0.3)',
+#         'emoji': '⚡', 'label': 'Impulsive Trader',
+#         'desc': 'Emotions tumhare decisions drive kar rahe hain. FOMO, revenge trading, aur overconfidence — yeh patterns tumhari capital destroy kar sakte hain.',
+#         'biases': [('FOMO','#742A2A'),('Revenge Trading','#63171B'),('Sunk Cost Fallacy','#521B1B'),('Loss Aversion','#3D1212')],
+#         'tip': '🚨 Koi bhi trade karne se pehle 24 ghante wait karo. Har trade ka journal rakho.',
+#         'risk_level': 9,
+#     },
+# }
+
 PROFILE_CONFIG = {
     'Conservative': {
         'color': '#38A169', 'bg': 'rgba(56,161,105,0.1)', 'border': 'rgba(56,161,105,0.3)',
         'emoji': '🛡️', 'label': 'Conservative Investor',
-        'desc': 'Tum risk se bachte ho aur capital preservation ko priority dete ho. Systematic, patient, aur disciplined — yeh tumhari trading ki pehchaan hai.',
+        'desc': 'You prioritize capital safety over returns. Patient, systematic, and disciplined — that is your edge.',
         'biases': [('Familiarity Bias','#276749'),('Status Quo Bias','#22543D'),('Loss Aversion','#1C4532')],
-        'tip': '💡 SIP aur index funds tumhare liye best suited hain. Diversification pe focus karo.',
+        'tip': '💡 SIPs and index funds suit you well. Keep diversification as your core strategy.',
         'risk_level': 2,
     },
     'Moderate': {
         'color': '#4299E1', 'bg': 'rgba(66,153,225,0.1)', 'border': 'rgba(66,153,225,0.3)',
         'emoji': '⚖️', 'label': 'Moderate Investor',
-        'desc': 'Tum balance maintain karte ho — na zyada conservative, na zyada aggressive. Research-backed decisions aur controlled risk tumhari strength hai.',
+        'desc': 'You strike a balance — not too cautious, not too bold. Research-backed decisions with controlled risk is your strength.',
         'biases': [('Recency Bias','#2B6CB0'),('Mild Anchoring','#2C5282'),('Confirmation Bias','#1A365D')],
-        'tip': '💡 Quarterly portfolio review karo. Ek hi sector mein zyada concentration avoid karo.',
+        'tip': '💡 Review your portfolio every quarter. Avoid over-concentration in a single sector.',
         'risk_level': 4,
     },
     'Aggressive': {
         'color': '#ED8936', 'bg': 'rgba(237,137,54,0.1)', 'border': 'rgba(237,137,54,0.3)',
         'emoji': '🔥', 'label': 'Aggressive Trader',
-        'desc': 'High risk tolerance hai tumhara. Tum opportunities dhundhte ho aur bold bets lagate ho. Skill hai — lekin discipline aur bhi important hai is stage pe.',
+        'desc': 'You have high risk tolerance and go after bold opportunities. The skill is there — but discipline matters even more now.',
         'biases': [('Overconfidence','#7B341E'),('Hot Hand Fallacy','#652B19'),('Confirmation Bias','#4A1E0F')],
-        'tip': '⚠️ Position sizing pe strict rules banao. Har trade mein max 2-3% capital risk rule follow karo.',
+        'tip': '⚠️ Set strict position sizing rules. Never risk more than 2-3% of capital on a single trade.',
         'risk_level': 7,
     },
     'Impulsive': {
         'color': '#FC8181', 'bg': 'rgba(252,129,129,0.1)', 'border': 'rgba(252,129,129,0.3)',
         'emoji': '⚡', 'label': 'Impulsive Trader',
-        'desc': 'Emotions tumhare decisions drive kar rahe hain. FOMO, revenge trading, aur overconfidence — yeh patterns tumhari capital destroy kar sakte hain.',
+        'desc': 'Emotions are driving your decisions. FOMO, revenge trading, and overconfidence can seriously damage your capital.',
         'biases': [('FOMO','#742A2A'),('Revenge Trading','#63171B'),('Sunk Cost Fallacy','#521B1B'),('Loss Aversion','#3D1212')],
-        'tip': '🚨 Koi bhi trade karne se pehle 24 ghante wait karo. Har trade ka journal rakho.',
+        'tip': '🚨 Wait 24 hours before placing any trade. Start maintaining a trading journal.',
         'risk_level': 9,
     },
 }
@@ -485,16 +600,19 @@ if st.session_state.page == 'home':
     st.markdown("""
     <div class="hero">
         <div class="hero-badge">Tattva Drishti × IcosaTrade AI</div>
-        <h1>Jaano apna<br>Trading Psychology</h1>
-        <p>7 real-life scenarios. 3 minute. Apna exact behavioral pattern aur cognitive biases discover karo.</p>
+        <h1>Know your<br>Trading Psychology</h1>
+        <p>7 scenarios. 3 minutes. Understand your trading psychology.</p>
     </div>
     """, unsafe_allow_html=True)
 
     c1,c2,c3 = st.columns(3)
     for col, icon, title, desc in [
-        (c1,'🧠','Behavioral Analysis','27 behavioral signals se tumhara trading DNA identify karta hai'),
-        (c2,'⚡','Instant Result','7 sawaalon mein complete psychological profile'),
-        (c3,'📊','Visual Insights','Detailed charts aur bias breakdown'),
+     #   (c1,'🧠','Behavioral Analysis','27 behavioral signals se tumhara trading DNA identify karta hai'),
+      #  (c2,'⚡','Instant Result','7 sawaalon mein complete psychological profile'),
+       # (c3,'📊','Visual Insights','Detailed charts aur bias breakdown'),
+        (c1,'🧠','Behavioral Analysis','Identifies your trading DNA from 27 behavioral signals'),
+(c2,'⚡','Instant Result','Complete psychological profile in 7 questions'),
+(c3,'📊','Visual Insights','Detailed charts and bias breakdown'),
     ]:
         col.markdown(f"""
         <div style="background:#0D1421;border:1px solid #1A2235;border-radius:14px;padding:24px;text-align:center;margin-bottom:16px">
@@ -507,7 +625,7 @@ if st.session_state.page == 'home':
     st.markdown("<br>", unsafe_allow_html=True)
     _,mc,_ = st.columns([1,2,1])
     with mc:
-        if st.button("🚀  Analysis Shuru Karo", type="primary", use_container_width=True):
+        if st.button("🚀  Analysis", type="primary", use_container_width=True):
             st.session_state.page = 'quiz'
             st.session_state.current_q = 0
             st.session_state.answers = {}
@@ -559,12 +677,12 @@ elif st.session_state.page == 'quiz':
 
     with col_back:
         if qi > 0:
-            if st.button("← Pichla Sawaal", use_container_width=True):
+            if st.button("← Previous", use_container_width=True):
                 st.session_state.current_q -= 1
                 st.rerun()
 
     with col_next:
-        btn_label = "Analyze Karo →" if qi == total - 1 else "Agla Sawaal →"
+        btn_label = "Analyze →" if qi == total - 1 else "Next →"
         if st.button(btn_label, type="primary", use_container_width=True):
             if chosen_letter:
                 st.session_state.answers[q['id']] = chosen_letter
@@ -580,7 +698,7 @@ elif st.session_state.page == 'quiz':
                     st.session_state.page = 'result'
                     st.rerun()
             else:
-                st.warning("Pehle ek option choose karo.")
+                st.warning(".")
 
 # ── RESULT PAGE ───────────────────────────────────────────────
 elif st.session_state.page == 'result':
