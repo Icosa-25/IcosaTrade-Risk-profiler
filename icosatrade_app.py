@@ -338,7 +338,7 @@ def train_model():
 model, scaler, le, feature_cols = train_model()
 
  ── Quiz Questions ────────────────────────────────────────────
-# QUESTIONS = [
+QUESTIONS = [
 #     {
 #         "id": "q1", "num": "01",
 #         "text": "Kal tumhara ₹10,000 ka trade ₹3,000 ke loss mein close hua.",
@@ -417,7 +417,7 @@ model, scaler, le, feature_cols = train_model()
 #         ]
 #     },
 # ]
-QUESTIONS = [
+#QUESTIONS = [
     {
         "id": "q1", "num": "01",
         "text": "Yesterday your ₹10,000 trade closed at a ₹3,000 loss.",
