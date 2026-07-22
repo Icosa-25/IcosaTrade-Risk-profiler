@@ -417,7 +417,6 @@ model, scaler, le, feature_cols = train_model()
 #         ]
 #     },
 # ]
-
 QUESTIONS = [
     {
         "id": "q1", "num": "01",
